@@ -23,3 +23,6 @@ class TodoItemView(generics.ListCreateAPIView):
 class TodoItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = TodoItem.objects.all()
     serializer_class = TodoItemSerializer
+    authentication_classes = [
+        permissions.sessionAuthentication, permissions.BasicAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
