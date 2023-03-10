@@ -1,8 +1,7 @@
 from django.http import JsonResponse
-from django.shortcuts import render
 from TODOApp.models import TodoItem
 from TODOApp.serializers import TodoItemSerializer
-from rest_framework import generics
+from rest_framework import generics, permissions
 
 
 # Create your views here.
@@ -16,6 +15,9 @@ def home(request):
 class TodoItemView(generics.ListCreateAPIView):
     queryset = TodoItem.objects.all()
     serializer_class = TodoItemSerializer
+    authentication_classes = [
+        permissions.sessionAuthentication, permissions.BasicAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class TodoItemDetailView(generics.RetrieveUpdateDestroyAPIView):
