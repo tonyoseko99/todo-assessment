@@ -1,45 +1,33 @@
 from django.http import JsonResponse
 from TODOApp.models import TodoItem
 from TODOApp.serializers import TodoItemSerializer
-from rest_framework import generics, permissions, authentication
-
+from rest_framework import generics
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
-from rest_framework.response import Response
-from rest_framework.views import APIView
-
-# import requests
-
-# url = 'http://localhost:8000/api-token-auth/'
-# headers = {'Authorization': 'Token ' +
-#            '8f60651d513ab3fcecc4649eccf5c0a2b7050756'}
-# response = requests.get(url, headers=headers)
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.authentication import TokenAuthentication, SessionAuthentication, BasicAuthentication
 
 
-class GenerateTokenView(APIView):
-    def get(self, request, username):
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return Response({'error': 'User "{}" does not exist'.format(username)})
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key})
+@api_view(['POST'])
+@permission_classes([])
+def register(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+    email = request.data.get('email')
 
+    # check if user exists
+    if User.objects.filter(username=username).exists():
+        return JsonResponse({'error': 'User "{}" already exists'.format(username)}, status=400)
 
-class TodoItemAuthToken(APIView):
-    authentication_classes = []
-    permission_classes = []
+    # create user
+    user = User.objects.create_user(
+        username=username, password=password, email=email)
 
-    def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
+    # create token
+    # token, created = Token.objects.get_or_create(user=user)
 
-        user = authenticate(username=username, password=password)
-        if not user:
-            return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key})
+    return JsonResponse({"response": f"User {user} created successfully!"}, status=201)
 
 
 # Create your views here.
@@ -53,14 +41,12 @@ def home(request):
 class TodoItemView(generics.ListCreateAPIView):
     queryset = TodoItem.objects.all()
     serializer_class = TodoItemSerializer
-    authentication_classes = [
-        authentication.SessionAuthentication, authentication.BasicAuthentication, authentication.TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [TokenAuthentication, SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
 
 
 class TodoItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = TodoItem.objects.all()
     serializer_class = TodoItemSerializer
-    authentication_classes = [
-        authentication.SessionAuthentication, authentication.BasicAuthentication, authentication.TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [TokenAuthentication, SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]

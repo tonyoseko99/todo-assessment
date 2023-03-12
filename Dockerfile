@@ -1,4 +1,4 @@
-# use an official Python runtime as a parent image
+# use an official Python runtime as a parent image, a lightweight, minor version of Python 3.8.10
 
 FROM python:3.8.10-slim-buster
 
