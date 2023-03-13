@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'rest_framework.authtoken',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -80,6 +81,12 @@ WSGI_APPLICATION = 'TODO_Project.wsgi.application'
 
 # CORS
 CORS_ORIGIN_ALLOW_ALL = True
+
+# swagger
+DEFAULT_RENDERER_CLASSES = [
+    'SwaggerUIRenderer',
+    'OpenAPIRenderer',
+]
 
 
 # Database

@@ -7,7 +7,12 @@ from rest_framework.settings import api_settings
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+# swagger documentation
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
+
+@swagger_auto_schema(request_body=UserSerializer)
 class SignupView(APIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = UserSerializer
