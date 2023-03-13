@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'TODOApp',
 
     'rest_framework',
+    'corsheaders'
     'rest_framework.authtoken'
 ]
 
@@ -52,6 +53,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'TODO_Project.urls'
@@ -73,6 +77,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'TODO_Project.wsgi.application'
+
+# CORS
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 # Database
