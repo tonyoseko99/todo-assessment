@@ -1,6 +1,4 @@
-from rest_framework import serializers, status
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework import serializers
 from .models import TodoItem
 from django.contrib.auth.models import User
 
@@ -8,7 +6,7 @@ from django.contrib.auth.models import User
 class TodoItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = TodoItem
-        fields = '__all__'
+        fields = ['id', 'title', 'description']
 
 
 class UserSerializer(serializers.ModelSerializer):

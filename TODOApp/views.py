@@ -1,12 +1,27 @@
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
 from .models import TodoItem
 from .serializers import TodoItemSerializer, UserSerializer
 from django.contrib.auth.models import User
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
+
+class SignupView(APIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = UserSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # create authentification views
+
+
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -33,19 +48,10 @@ class ObtainAuthTokenView(ObtainAuthToken):
 class TodoItemList(generics.ListCreateAPIView):
     queryset = TodoItem.objects.all()
     serializer_class = TodoItemSerializer
-    permission_classes = [permissions.AllowAny]
-
-    def get_queryset(self):
-        return TodoItem.objects.filter(owner=self.request.user)
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class TodoItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = TodoItem.objects.all()
     serializer_class = TodoItemSerializer
-    permission_classes = [permissions.AllowAny]
-
-    def get_queryset(self):
-        return TodoItem.objects.filter(owner=self.request.user)
+    permission_classes = [permissions.IsAuthenticated]
