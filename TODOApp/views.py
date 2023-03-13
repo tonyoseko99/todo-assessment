@@ -1,20 +1,17 @@
-from TODOApp.models import TodoItem
-from TODOApp.serializers import TodoItemSerializer
-from rest_framework import generics
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.authentication import SessionAuthentication
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework import generics, permissions
+from .models import TodoItem
+from .serializers import TodoItemSerializer
+
+# Create your views here.
 
 
-class ItemsView(generics.ListCreateAPIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [AllowAny]
+class TodoItemList(generics.ListCreateAPIView):
     queryset = TodoItem.objects.all()
     serializer_class = TodoItemSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        return TodoItem.objects.filter(owner=self.request.user)
 
-class TodoItemDetailView(generics.RetrieveUpdateDestroyAPIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [AllowAny]
-    queryset = TodoItem.objects.all()
-    serializer_class = TodoItemSerializer
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
