@@ -24,6 +24,10 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
 
 
+class ObtainAuthTokenView(ObtainAuthToken):
+    serializer_class = api_settings.DEFAULT_AUTHENTICATION_CLASSES[0]
+
+
 # Create your views here.
 
 
